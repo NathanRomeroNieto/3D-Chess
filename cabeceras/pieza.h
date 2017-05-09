@@ -2,7 +2,7 @@
 
 
 //Clase pieza es una clase abstracta
-class Piece{
+class Pieza{
     public:
     	  //Atributos
     		//c_ = Current
@@ -19,12 +19,12 @@ class Piece{
 
       	//explicit evita las conversiones de los tipos
       	//Constructor Clases pieza
-        explicit Piece(const char* modelFile, const char* textureFile,int textureNum,char col, int row);
+        explicit Pieza(const char* modelFile, const char* textureFile,int textureNum,char col, int row);
 
-        ~Piece(){free(vertexArray);free(normalArray);free(uvArray);};
+        ~Pieza(){free(vertexArray);free(normalArray);free(uvArray);};
 
       	//Metodos virtuales
-        virtual void draw(bool side_piece = false, float x = 0.0f, float y = 0.0f);
+        virtual void draw(bool side_Pieza = false, float x = 0.0f, float y = 0.0f);
 	      virtual void listMoves(void);
         virtual void move(unsigned int col, unsigned int row);
         virtual void move(char col, unsigned int row);
@@ -39,7 +39,7 @@ class Piece{
 
 //Implementacion De la Clase
 
-Piece::Piece(const char* modelFile, const char* textureFile,int textureNum,char col,int row){
+Pieza::Pieza(const char* modelFile, const char* textureFile,int textureNum,char col,int row){
     angle = 0.0f;
     loadOBJ(modelFile,vertexArray,normalArray,uvArray,numVerts);
     textureNumber = textureNum;
@@ -53,16 +53,16 @@ Piece::Piece(const char* modelFile, const char* textureFile,int textureNum,char 
     c_Column = col;
     if(strstr(textureFile,"black")){
         color = BLACK;
-        grid_pieces[c_Row-1][c_Col-1] = color;
+        grid_Piezas[c_Row-1][c_Col-1] = color;
     }else if(strstr(textureFile,"white")){
         color = WHITE;
-        grid_pieces[c_Row-1][c_Col-1] = color;
+        grid_Piezas[c_Row-1][c_Col-1] = color;
     }else{
         color = -1;
     }
 }
 
-void Piece::render(void){
+void Pieza::render(void){
     glBindTexture(GL_TEXTURE_2D,texture[textureNumber]);
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_NORMAL_ARRAY);
@@ -78,15 +78,15 @@ void Piece::render(void){
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
-void Piece::draw(bool side_piece, float pX, float pZ){
+void Pieza::draw(bool side_Pieza, float pX, float pZ){
     float x = pX, z = pZ;
     glPushMatrix();
 
-    if(!side_piece){
+    if(!side_Pieza){
         x = -11.3+(2.5*c_Col);
         z = 11.3-(2.5*c_Row);
     }
-    if(c_Column != 'z'){ //normal pieces
+    if(c_Column != 'z'){ //normal Piezas
         glColor3f(1,1,1);
         glScalef(0.8,0.8,0.8);
         glTranslatef(x,-1.25,z);
@@ -99,7 +99,7 @@ void Piece::draw(bool side_piece, float pX, float pZ){
     glPopMatrix();
 }
 
-void Piece::pick(void){
+void Pieza::pick(void){
     picked = true;
     listMoves();
     grid_row = c_Row;
@@ -107,17 +107,17 @@ void Piece::pick(void){
     grid_column = c_Column;
 }
 
-void Piece::unpick(void){
+void Pieza::unpick(void){
     picked = false;
 }
 
-void Piece::createMoveList(int col_inc, int row_inc, int min_array){ //column increment,row increment
+void Pieza::createMoveList(int col_inc, int row_inc, int min_array){ //column increment,row increment
     int r = c_Row, c = c_Col;
     for(int i = 0; i < 7; i++){
         c = c_Col-(col_inc*(i+1));
         r = c_Row-(row_inc*(i+1));
-        if(checkSquare(c,r)){ //if the square has a piece in it
-            if(!((grid_pieces[r-1][c-1] == BLACK && gamestate == BLACK_TURN) || (grid_pieces[r-1][c-1] == WHITE && gamestate == WHITE_TURN))){
+        if(checkSquare(c,r)){ //if the square has a Pieza in it
+            if(!((grid_Piezas[r-1][c-1] == BLACK && gamestate == BLACK_TURN) || (grid_Piezas[r-1][c-1] == WHITE && gamestate == WHITE_TURN))){
                 highlight_tile(c,r,min_array+i,true);
             }
             break;
@@ -126,21 +126,21 @@ void Piece::createMoveList(int col_inc, int row_inc, int min_array){ //column in
     }
 }
 
-void Piece::listMoves(void){
+void Pieza::listMoves(void){
     clearMovesList();
 }
 
-void Piece::move(unsigned int col, unsigned int row){
-    grid_pieces[c_Row-1][c_Col-1] = 0;
+void Pieza::move(unsigned int col, unsigned int row){
+    grid_Piezas[c_Row-1][c_Col-1] = 0;
     c_Col = col;
     c_Row = row;
     c_Column = column[col-1];
-    grid_pieces[c_Row-1][c_Col-1] = color;
+    grid_Piezas[c_Row-1][c_Col-1] = color;
     has_moved = true;
 }
 
-void Piece::move(char col, unsigned int row){
-    grid_pieces[c_Row-1][c_Col-1] = 0;
+void Pieza::move(char col, unsigned int row){
+    grid_Piezas[c_Row-1][c_Col-1] = 0;
     for(unsigned int i = 0; i <= sizeof(column)/sizeof(char); i++){
         if(tolower(column[i]) == tolower(col)){
             c_Col = i+1;
@@ -148,9 +148,9 @@ void Piece::move(char col, unsigned int row){
     }
     c_Row = row;
     c_Column = col;
-    grid_pieces[c_Row-1][c_Col-1] = color;
-    for(int i = 0; i <= pieces.size()-1; i ++){
-        pieces.at(i)->en_passant = false;
+    grid_Piezas[c_Row-1][c_Col-1] = color;
+    for(int i = 0; i <= Piezas.size()-1; i ++){
+        Piezas.at(i)->en_passant = false;
     }
     has_moved = true;
 }

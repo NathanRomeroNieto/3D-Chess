@@ -1,7 +1,7 @@
 #include <GL/glew.h>
 #include <GL/freeglut.h>
-#include "textfile.h"
-#include "loaders.h"
+#include "lectorarchivos.h"
+#include "cargador.h"
 #include <vector>
 #include <algorithm>
 
@@ -23,21 +23,6 @@ using namespace std;
 enum GAMESTATE : int{
     MENU,WHITE_TURN,BLACK_TURN,WHITE_WIN,BLACK_WIN,TIE
 };
-
-//Variables Globales
-extern int grid_pieces[8][8], grid_row, grid_col, highlighted_tiles[56][2]; //No se porque es 56*2
-extern char column[9], grid_column;
-extern GAMESTATE gamestate; //enum which stores current state, like player turns and menu
-extern GLuint p,f,v; //program, frag shader, vert shader
-extern std::vector<Piece*> pieces,side_pieces;
-extern Piece* piece_at(int col, int row);
-
-//Prototipos de Funciones Globales
-extern void setShaders(void);
-extern void drawGrid(void);
-extern void initDLs(void);
-extern void clearMovesList(void);
-extern void remove_piece(int col, int row);
 
 //Declaraciones de Variables
 GLuint texture[32];
@@ -171,4 +156,28 @@ bool checkSquare(int col, int row){
         return true;
     }
     return false;
+}
+
+void clearMovesList(void){
+    memset(highlighted_tiles,0,sizeof(highlighted_tiles[0][0])*(sizeof(highlighted_tiles)/sizeof(highlighted_tiles[0]))*2); //clear the array
+}
+
+int get_index(int col, int row){
+    auto it = std::find(pieces.begin(), pieces.end(), piece_at(col,row));
+    if (it == pieces.end()){
+        return -1;
+    }else{
+        return std::distance(pieces.begin(), it);
+    }
+}
+
+void highlight_tile(int col, int row,unsigned int tile, bool captured_mode = false){
+    if((col <= 8 && row <= 8 && col > 0 && row > 0) && ((gamestate == WHITE_TURN && grid_pieces[row-1][col-1] != WHITE) ||(gamestate == BLACK_TURN && grid_pieces[row-1][col-1] != BLACK))){
+        highlighted_tiles[tile][0] = row;
+        highlighted_tiles[tile][1] = col;
+    }
+}
+
+void highlight_tile_k(int col, int row,unsigned int tile, bool captured_mode = false){
+    highlight_tile(col, row, tile, captured_mode);
 }
