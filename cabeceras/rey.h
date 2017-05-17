@@ -13,12 +13,12 @@ class Rey : public Pieza{
         ~Rey();
 
 	//Metodos
-        void listMoves(void);
-        void move(unsigned int col, unsigned int row);
+        void ListaMovimientos(void);
+        void movimiento(unsigned int col, unsigned int row);
 };
 
-void Rey::listMoves(void){
-    clearMovesList();
+void Rey::ListaMovimientos(void){
+    limpiarListaMovimientos();
     highlight_tile_k(c_Col+1,c_Row,0);
     highlight_tile_k(c_Col-1,c_Row,1);
     highlight_tile_k(c_Col,c_Row+1,2);
@@ -37,19 +37,19 @@ void Rey::listMoves(void){
     }
 }
 
-void Rey::move(unsigned int col, unsigned int row){
+void Rey::movimiento(unsigned int col, unsigned int row){
     grid_pieces[c_Row-1][c_Col-1] = 0;
     if(c_Col-col == 2){
         if(color == WHITE){
-            piece_at(1,1)->move((unsigned int)4,(unsigned int)1);
+            piece_at(1,1)->movimiento((unsigned int)4,(unsigned int)1);
         }else if(color == BLACK){
-            piece_at(1,8)->move((unsigned int)4,(unsigned int)8);
+            piece_at(1,8)->movimiento((unsigned int)4,(unsigned int)8);
         }
     }else if(c_Col-col == -2){
         if(color == WHITE){
-            piece_at(8,1)->move((unsigned int)6,(unsigned int)1);
+            piece_at(8,1)->movimiento((unsigned int)6,(unsigned int)1);
         }else if(color == BLACK){
-            piece_at(8,8)->move((unsigned int)6,(unsigned int)8);
+            piece_at(8,8)->movimiento((unsigned int)6,(unsigned int)8);
         }
     }
     c_Col = col;

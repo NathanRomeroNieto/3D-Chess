@@ -11,7 +11,7 @@ class Pieza{
     		//Para entender como funcionan:
     		//http://www.songho.ca/opengl/gl_vertexarray.html#
     		//uvArray = http://www.c-jump.com/bcc/common/Talk3/OpenGL/Wk07_texture/const_images/texturemapping.png
-    		GLfloat *vertexArray,*normalArray,*uvArray;
+    		GLfloat *vertexArray, *normalArray, *uvArray;
     		float var_swag;
         bool picked = false, en_passant = false, has_moved = false;
     	   //Fin Atributos
