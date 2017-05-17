@@ -158,7 +158,7 @@ bool checkSquare(int col, int row){
     return false;
 }
 
-void clearMovesList(void){
+void limpiarListaMovimientos(void){
     memset(highlighted_tiles,0,sizeof(highlighted_tiles[0][0])*(sizeof(highlighted_tiles)/sizeof(highlighted_tiles[0]))*2); //clear the array
 }
 

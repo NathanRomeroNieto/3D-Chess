@@ -1,6 +1,5 @@
 #include "globales.h"
 
-
 //Clase pieza es una clase abstracta
 class Pieza{
     public:
@@ -24,16 +23,16 @@ class Pieza{
         ~Pieza(){free(vertexArray);free(normalArray);free(uvArray);};
 
       	//Metodos virtuales
-        virtual void draw(bool side_Pieza = false, float x = 0.0f, float y = 0.0f);
-	      virtual void listMoves(void);
-        virtual void move(unsigned int col, unsigned int row);
-        virtual void move(char col, unsigned int row);
+        virtual void Dibujar(bool side_Pieza = false, float x = 0.0f, float y = 0.0f);
+	      virtual void ListaMovimientos(void);
+        virtual void movimiento(unsigned int col, unsigned int row);
+        virtual void movimiento(char col, unsigned int row);
       	//Fin de Metodos virtuales
 
       	//Metodos
       	void pick(void);
         void unpick(void);
-        void createMoveList(int col_inc, int row_inc, int min_array);
+        void CreacionListaMovimientos(int col_inc, int row_inc, int min_array);
         void render(void);
 };
 
@@ -78,7 +77,7 @@ void Pieza::render(void){
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
-void Pieza::draw(bool side_Pieza, float pX, float pZ){
+void Pieza::Dibujar(bool side_Pieza, float pX, float pZ){
     float x = pX, z = pZ;
     glPushMatrix();
 
@@ -101,7 +100,7 @@ void Pieza::draw(bool side_Pieza, float pX, float pZ){
 
 void Pieza::pick(void){
     picked = true;
-    listMoves();
+    ListaMovimientos();
     grid_row = c_Row;
     grid_col = c_Col;
     grid_column = c_Column;
@@ -111,7 +110,7 @@ void Pieza::unpick(void){
     picked = false;
 }
 
-void Pieza::createMoveList(int col_inc, int row_inc, int min_array){ //column increment,row increment
+void Pieza::CreacionListaMovimientos(int col_inc, int row_inc, int min_array){ //column increment,row increment
     int r = c_Row, c = c_Col;
     for(int i = 0; i < 7; i++){
         c = c_Col-(col_inc*(i+1));
@@ -126,11 +125,11 @@ void Pieza::createMoveList(int col_inc, int row_inc, int min_array){ //column in
     }
 }
 
-void Pieza::listMoves(void){
-    clearMovesList();
+void Pieza::ListaMovimientos(void){
+    limpiarListaMovimientos();
 }
 
-void Pieza::move(unsigned int col, unsigned int row){
+void Pieza::movimiento(unsigned int col, unsigned int row){
     grid_Piezas[c_Row-1][c_Col-1] = 0;
     c_Col = col;
     c_Row = row;
@@ -139,7 +138,7 @@ void Pieza::move(unsigned int col, unsigned int row){
     has_moved = true;
 }
 
-void Pieza::move(char col, unsigned int row){
+void Pieza::movimiento(char col, unsigned int row){
     grid_Piezas[c_Row-1][c_Col-1] = 0;
     for(unsigned int i = 0; i <= sizeof(column)/sizeof(char); i++){
         if(tolower(column[i]) == tolower(col)){

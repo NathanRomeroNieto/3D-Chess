@@ -1,11 +1,22 @@
+#include "pieza.h"
+#include "globales.h"
+
 //Clase Alfil Herreda de la clase Pieza
-class Bishop : public Piece{
+class Alfil : public Pieza{
     public:
 	//Pasar Parametros del contructor de la clase Rey al constructor de la clase pieza
-        Bishop(const char* modelFile, const char* textureFile,int textureNum,char col, int row) : Piece(modelFile, textureFile, textureNum,col,row){
-            printf("Bishop loaded\n");
+        Alfil(const char* modelFile, const char* textureFile,int textureNum,char col, int row) : Pieza(modelFile, textureFile, textureNum,col,row){
+            printf("Alfil Cargado\n");
             value = 3;
         };
-        ~Bishop();
-        void listMoves(void);
+        ~Alfil();
+        void ListaMovimientos(void);
 };
+
+void Alfil::ListaMovimientos(void){
+    limpiarListaMovimientos();
+    CreacionListaMovimientos(1,1,0);
+    CreacionListaMovimientos(-1,1,7);
+    CreacionListaMovimientos(-1,-1,14);
+    CreacionListaMovimientos(1,-1,21);
+}
