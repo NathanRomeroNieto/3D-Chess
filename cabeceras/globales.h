@@ -68,16 +68,15 @@ void remove_piece(int col, int row){
 }
 
 /*!
-   \brief "Description"
-   \param "Param description"
-   \pre "Pre-conditions"
-   \post "Post-conditions"
-   \return "Return of the function"
+   \brief "Generacion del los celdas"
+   \param "Void"
+   \return "Void"
 */
 void initDLs(void){
     printf("%i\n",A);
     tile = glGenLists(1); //Genera una lista de visualizacion
-    //No entiendo que diablos hace aqui chuy :V
+
+    //Rellena la lista y la compila
     glNewList(tile,GL_COMPILE);
       glBegin(GL_QUADS);
           glVertex3f(1,0,1);
@@ -98,17 +97,21 @@ void drawGrid(void){
     glEnable(GL_BLEND);
     glColor4f(1,1,1,0);
     int counter = 0;
+    //Dibuja cada celda
     for(int i = 0; i <= 7; i++){
         for(int j = 0; j <= 7; j++){
             counter++;
-            glLoadName(100 + counter);
+            glLoadName(100 + counter); //Cargar un nombre en el Stack de nombres
             glPushMatrix();
             glColor4f(1,1,1,0);
-            glTranslatef(-7+(i*2),-0.97,(-7+(j*2)));
-            glCallList(tile);
+            glTranslatef( -7+(i*2) , -0.97 , (-7+(j*2)) );
+            glCallList(tile); //Ejecuta la lista celda
             glPopMatrix();
         }
     }
+
+    //Dibuja las celdas marcadas donde se puede mover la pieza
+    //En la inicializacion no es posible llamarla pues esta inicializada con 0
     for(int k = 0; k < sizeof(highlighted_tiles)/sizeof(highlighted_tiles[0]); k++){
         if(highlighted_tiles[k] != 0){
             int row = highlighted_tiles[k][0]-1;
@@ -117,7 +120,7 @@ void drawGrid(void){
                 glLoadName(165);
                 glPushMatrix();
                 glColor4f(1,0,0,0.5);
-                glTranslatef(-7+(col*2),-0.96,-(-7+(row*2)));
+                glTranslatef(-7+(col*2), -0.96 , -(-7+(row*2)) );
                 glCallList(tile);
                 glColor4f(1,0,0,1);
                   glBegin(GL_LINES);
@@ -146,6 +149,13 @@ void drawGrid(void){
     glDisable(GL_BLEND);
 }
 
+/*!
+   \brief "Description"
+   \param "Param description"
+   \pre "Pre-conditions"
+   \post "Post-conditions"
+   \return "Return of the function"
+*/
 void setShaders(void){
     char *vs = NULL,*fs = NULL;
 
@@ -158,8 +168,8 @@ void setShaders(void){
     const char *vv = vs;
     const char *ff = fs;
 
-    glShaderSource(v,1,&vv,NULL);
-    glShaderSource(f,1,&ff,NULL);
+    glShaderSource(v , 1 , &vv , NULL);
+    glShaderSource(f , 1 , &ff , NULL);
 
     free(vs);free(fs);
 
@@ -187,7 +197,7 @@ void limpiarListaMovimientos(void){
 }
 
 int get_index(int col, int row){
-    auto it = std::find(pieces.begin(), pieces.end(), piece_at(col,row));
+    auto it = find(pieces.begin(), pieces.end(), piece_at(col,row));
     if (it == pieces.end()){
         return -1;
     }else{
