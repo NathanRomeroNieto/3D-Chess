@@ -34,7 +34,7 @@ int highlighted_tiles[56][2] = {0};
 int grid_pieces[8][8] = {0};
 GAMESTATE gamestate;
 char column[9] = {'a','b','c','d','e','f','g','h','z'};
-vector<Piece*> pieces,side_pieces;
+vector<Pieza*> pieces,side_pieces;
 
 //Declaracion de Funciones
 
@@ -42,9 +42,9 @@ vector<Piece*> pieces,side_pieces;
    \brief "Funcion para retornar la posision de una pieza si estan en
           la posision enviada por parametros"
    \param "int Col, int row"
-   \return "Piece* "
+   \return "Pieza* "
 */
-Piece* piece_at(int col, int row){
+Pieza* piece_at(int col, int row){
     for(int i = 0; i <= pieces.size()-1; i++){
         if(pieces.at(i)->c_Row == row && pieces.at(i)->c_Col == col){ //busqueda si existe una pieza en esta posision
             return pieces.at(i); //retorno de un apuntador de la clase pieza
@@ -58,7 +58,7 @@ Piece* piece_at(int col, int row){
    \return "Void"
 */
 void remove_piece(int col, int row){
-    Piece* temp = piece_at(col, row); //retorno de la pieza
+    Pieza* temp = piece_at(col, row); //retorno de la pieza
     auto it = find(pieces.begin(), pieces.end(), temp); // Busca de principio a fin del vector pieces el valor de temp
     side_pieces.push_back(temp); //Piezas comidas
     if(it != pieces.end()){
@@ -76,7 +76,7 @@ void remove_piece(int col, int row){
 */
 void initDLs(void){
     printf("%i\n",A);
-    tile = glGenLists(1);
+    tile = glGenLists(1); //Genera una lista de visualizacion
     //No entiendo que diablos hace aqui chuy :V
     glNewList(tile,GL_COMPILE);
       glBegin(GL_QUADS);
