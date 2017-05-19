@@ -85,7 +85,7 @@ void draw(void){
 
     glLoadName(99);
     drawBoard();
-    drawGrid();
+    dibujar_tablero();
     drawPieces();
 
     glutSwapBuffers();

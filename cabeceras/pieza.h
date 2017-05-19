@@ -23,7 +23,7 @@ class Pieza{
         ~Pieza(){free(vertexArray);free(normalArray);free(uvArray);};
 
       	//Metodos virtuales
-        virtual void Dibujar(bool side_Pieza = false, float x = 0.0f, float y = 0.0f);
+        virtual void Dibujar(bool pieza_lateral = false, float x = 0.0f, float y = 0.0f);
 	      virtual void ListaMovimientos(void);
         virtual void movimiento(unsigned int col, unsigned int row);
         virtual void movimiento(char col, unsigned int row);
@@ -77,11 +77,11 @@ void Pieza::render(void){
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
-void Pieza::Dibujar(bool side_Pieza, float pX, float pZ){
+void Pieza::Dibujar(bool pieza_lateral, float pX, float pZ){
     float x = pX, z = pZ;
     glPushMatrix();
 
-    if(!side_Pieza){
+    if(!pieza_lateral){
         x = -11.3+(2.5*c_Col);
         z = 11.3-(2.5*c_Row);
     }

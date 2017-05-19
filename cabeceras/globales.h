@@ -92,7 +92,7 @@ void initDLs(void){
    \param "void"
    \return "void"
 */
-void drawGrid(void){
+void dibujar_tablero(void){
     glDisable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);
     glColor4f(1,1,1,0);
@@ -201,7 +201,7 @@ bool checkSquare(int col, int row){
    \return "void"
 */
 void limpiarListaMovimientos(void){
-    memset(casillas_resaltadas,0,sizeof(casillas_resaltadas[0][0])*(sizeof(casillas_resaltadas)/sizeof(casillas_resaltadas[0]))*2); //clear the array
+    memset(casillas_resaltadas, 0 , sizeof(casillas_resaltadas[0][0]) * (sizeof(casillas_resaltadas) / sizeof(casillas_resaltadas[0]))* 2); //clear the array
 }
 
 
