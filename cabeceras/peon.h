@@ -18,16 +18,16 @@ class Peon : public Pieza{
 void Peon::movimiento(unsigned int col, unsigned int row){
     Pieza::movimiento(col,row);
     if(color == WHITE){
-        if(grid_pieces[row-2][col-1] == BLACK && piece_at(col,row-1)->en_passant){
-            remove_piece(col,row-1);
+        if(piezas_tablero[row-2][col-1] == BLACK && pieza_en(col,row-1)->en_passant){
+            remover_pieza(col,row-1);
         }
     }else if(color == BLACK){
-        if(grid_pieces[row][col-1] == WHITE && piece_at(col,row+1)->en_passant){
-            remove_piece(col,row+1);
+        if(piezas_tablero[row][col-1] == WHITE && pieza_en(col,row+1)->en_passant){
+            remover_pieza(col,row+1);
         }
     }
-    for(int i = 0; i <= pieces.size()-1; i ++){
-        pieces.at(i)->en_passant = false;
+    for(int i = 0; i <= piezas.size()-1; i ++){
+        piezas.at(i)->en_passant = false;
     }
     if(firstMove){
         firstMove = false;
@@ -45,10 +45,10 @@ void Peon::check_promotion(void){
         return;
     if(color == BLACK && c_Row == 1){
         temp = new Queen("data/models/queen.dae","data/textures/black_queen.jpg",3,c_Column,c_Row);
-        pieces.at(index) = temp;
+        piezas.at(index) = temp;
     }else if(color == WHITE && c_Row == 8){
         temp = new Queen("data/models/queen.dae","data/textures/white_queen.jpg",2,c_Column,c_Row);
-        pieces.at(index) = temp;
+        piezas.at(index) = temp;
     }
 }
 
@@ -61,20 +61,20 @@ void Peon::ListaMovimientos(void){
                 highlight_tile(c_Col, c_Row-2, 1);
         }
         //diagonal capture moves
-        if(grid_pieces[c_Row-2][c_Col-2] == WHITE){
+        if(piezas_tablero[c_Row-2][c_Col-2] == WHITE){
             highlight_tile(c_Col-1, c_Row-1, 2, true);
         }
-        if(grid_pieces[c_Row-2][c_Col] == WHITE){
+        if(piezas_tablero[c_Row-2][c_Col] == WHITE){
             highlight_tile(c_Col+1, c_Row-1, 3, true);
         }
         //en passant
-        if(grid_pieces[c_Row-1][c_Col-2] == WHITE){
-            if(piece_at(c_Col-1,c_Row)->value == 1 && piece_at(c_Col-1,c_Row)->en_passant){ //if it's a Peon after first movimiento
+        if(piezas_tablero[c_Row-1][c_Col-2] == WHITE){
+            if(pieza_en(c_Col-1,c_Row)->value == 1 && pieza_en(c_Col-1,c_Row)->en_passant){ //if it's a Peon after first movimiento
                 highlight_tile(c_Col-1, c_Row-1, 4, true);
             }
         }
-        if(grid_pieces[c_Row-1][c_Col] == WHITE){
-            if(piece_at(c_Col+1,c_Row)->value == 1 && piece_at(c_Col+1,c_Row)->en_passant){
+        if(piezas_tablero[c_Row-1][c_Col] == WHITE){
+            if(pieza_en(c_Col+1,c_Row)->value == 1 && pieza_en(c_Col+1,c_Row)->en_passant){
                 highlight_tile(c_Col+1, c_Row-1, 4, true);
             }
         }
@@ -84,20 +84,20 @@ void Peon::ListaMovimientos(void){
             if(firstMove && !checkSquare(c_Col, c_Row+2))
                 highlight_tile(c_Col, c_Row+2, 1);
         }
-        if(grid_pieces[c_Row][c_Col-2] == BLACK){
+        if(piezas_tablero[c_Row][c_Col-2] == BLACK){
             highlight_tile(c_Col-1, c_Row+1, 2, true);
         }
-        if(grid_pieces[c_Row][c_Col] == BLACK){
+        if(piezas_tablero[c_Row][c_Col] == BLACK){
             highlight_tile(c_Col+1, c_Row+1, 3, true);
         }
         //en passant
-        if(grid_pieces[c_Row-1][c_Col-2] == BLACK){
-            if(piece_at(c_Col-1, c_Row)->value == 1 && piece_at(c_Col-1,c_Row)->en_passant){
+        if(piezas_tablero[c_Row-1][c_Col-2] == BLACK){
+            if(pieza_en(c_Col-1, c_Row)->value == 1 && pieza_en(c_Col-1,c_Row)->en_passant){
                 highlight_tile(c_Col-1, c_Row+1, 4, true);
             }
         }
-        if(grid_pieces[c_Row-1][c_Col] == BLACK){
-            if(piece_at(c_Col+1, c_Row)->value == 1 && piece_at(c_Col+1,c_Row)->en_passant){
+        if(piezas_tablero[c_Row-1][c_Col] == BLACK){
+            if(pieza_en(c_Col+1, c_Row)->value == 1 && pieza_en(c_Col+1,c_Row)->en_passant){
                 highlight_tile(c_Col+1, c_Row+1, 4, true);
             }
         }

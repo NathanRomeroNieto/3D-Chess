@@ -17,7 +17,7 @@ class Pieza{
     	   //Fin Atributos
 
       	//explicit evita las conversiones de los tipos
-      	//Constructor Clases pieza
+      	//Constructor Clase Pieza
         explicit Pieza(const char* modelFile, const char* textureFile,int textureNum,char col, int row);
 
         ~Pieza(){free(vertexArray);free(normalArray);free(uvArray);};
@@ -39,13 +39,13 @@ class Pieza{
 //Implementacion De la Clase
 
 Pieza::Pieza(const char* modelFile, const char* textureFile,int textureNum,char col,int row){
-    angle = 0.0f;
+    angulo = 0.0f;
     loadOBJ(modelFile,vertexArray,normalArray,uvArray,numVerts);
     textureNumber = textureNum;
-    loadGLTexture(textureFile,textureNumber,texture);
+    loadGLTexture(textureFile,textureNumber,textura);
     c_Row = row;
-    for(unsigned int i = 0; i <= sizeof(column)/sizeof(char); i++){
-        if(tolower(column[i]) == tolower(col)){
+    for(unsigned int i = 0; i <= sizeof(columna)/sizeof(char); i++){
+        if(tolower(columna[i]) == tolower(col)){
             c_Col = i+1; //letter to int
         }
     }
@@ -62,7 +62,7 @@ Pieza::Pieza(const char* modelFile, const char* textureFile,int textureNum,char 
 }
 
 void Pieza::render(void){
-    glBindTexture(GL_TEXTURE_2D,texture[textureNumber]);
+    glBindTexture(GL_TEXTURE_2D,textura[textureNumber]);
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_NORMAL_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -101,22 +101,22 @@ void Pieza::Dibujar(bool side_Pieza, float pX, float pZ){
 void Pieza::pick(void){
     picked = true;
     ListaMovimientos();
-    grid_row = c_Row;
-    grid_col = c_Col;
-    grid_column = c_Column;
+    fila_tablero = c_Row;
+    columna_tablero = c_Col;
+    columna_tablero_c = c_Column;
 }
 
 void Pieza::unpick(void){
     picked = false;
 }
 
-void Pieza::CreacionListaMovimientos(int col_inc, int row_inc, int min_array){ //column increment,row increment
+void Pieza::CreacionListaMovimientos(int col_inc, int row_inc, int min_array){ //columna increment,row increment
     int r = c_Row, c = c_Col;
     for(int i = 0; i < 7; i++){
         c = c_Col-(col_inc*(i+1));
         r = c_Row-(row_inc*(i+1));
         if(checkSquare(c,r)){ //if the square has a Pieza in it
-            if(!((grid_Piezas[r-1][c-1] == BLACK && gamestate == BLACK_TURN) || (grid_Piezas[r-1][c-1] == WHITE && gamestate == WHITE_TURN))){
+            if(!((grid_Piezas[r-1][c-1] == BLACK && estadodeljuego == TURNO_NEGRAS) || (grid_Piezas[r-1][c-1] == WHITE && estadodeljuego == TURNO_BLANCAS))){
                 highlight_tile(c,r,min_array+i,true);
             }
             break;
@@ -133,15 +133,15 @@ void Pieza::movimiento(unsigned int col, unsigned int row){
     grid_Piezas[c_Row-1][c_Col-1] = 0;
     c_Col = col;
     c_Row = row;
-    c_Column = column[col-1];
+    c_Column = columna[col-1];
     grid_Piezas[c_Row-1][c_Col-1] = color;
     has_moved = true;
 }
 
 void Pieza::movimiento(char col, unsigned int row){
     grid_Piezas[c_Row-1][c_Col-1] = 0;
-    for(unsigned int i = 0; i <= sizeof(column)/sizeof(char); i++){
-        if(tolower(column[i]) == tolower(col)){
+    for(unsigned int i = 0; i <= sizeof(columna)/sizeof(char); i++){
+        if(tolower(columna[i]) == tolower(col)){
             c_Col = i+1;
         }
     }

@@ -38,23 +38,23 @@ void Rey::ListaMovimientos(void){
 }
 
 void Rey::movimiento(unsigned int col, unsigned int row){
-    grid_pieces[c_Row-1][c_Col-1] = 0;
+    piezas_tablero[c_Row-1][c_Col-1] = 0;
     if(c_Col-col == 2){
         if(color == WHITE){
-            piece_at(1,1)->movimiento((unsigned int)4,(unsigned int)1);
+            pieza_en(1,1)->movimiento((unsigned int)4,(unsigned int)1);
         }else if(color == BLACK){
-            piece_at(1,8)->movimiento((unsigned int)4,(unsigned int)8);
+            pieza_en(1,8)->movimiento((unsigned int)4,(unsigned int)8);
         }
     }else if(c_Col-col == -2){
         if(color == WHITE){
-            piece_at(8,1)->movimiento((unsigned int)6,(unsigned int)1);
+            pieza_en(8,1)->movimiento((unsigned int)6,(unsigned int)1);
         }else if(color == BLACK){
-            piece_at(8,8)->movimiento((unsigned int)6,(unsigned int)8);
+            pieza_en(8,8)->movimiento((unsigned int)6,(unsigned int)8);
         }
     }
     c_Col = col;
     c_Row = row;
-    c_Column = column[col-1];
-    grid_pieces[c_Row-1][c_Col-1] = color;
+    c_Column = columna[col-1];
+    piezas_tablero[c_Row-1][c_Col-1] = color;
     has_moved = true;
 }

@@ -1,7 +1,7 @@
-#include "pieces.h"
+#include "piezas.h"
 
 float lpos[4] = {1,0.5,1,0};
-int screen_width = 850,screen_height = 850;
+int screen_width = 850, screen_height = 850;
 
 //Some piece variables
 Piece* board;
@@ -11,7 +11,7 @@ Piece* selected_piece = NULL;
 void print_grid_pieces(void){
     for(int row = 0; row <= 7; row++){
         for(int col = 0; col <= 7; col++){
-            int element = grid_pieces[row][col];
+            int element = piezas_tablero[row][col];
             if(element > 0){
                 printf("[%i]",element);
             }else if(element == 0){
@@ -24,25 +24,25 @@ void print_grid_pieces(void){
 }
 
 void loadPieces(){
-    pieces.push_back(new King("data/models/king.dae","data/textures/white_king.jpg",0,'e',1));
-    pieces.push_back(new King("data/models/king.dae","data/textures/black_king.jpg",1,'e',8));
-    pieces.push_back(new Queen("data/models/queen.dae","data/textures/white_queen.jpg",2,'d',1));
-    pieces.push_back(new Queen("data/models/queen.dae","data/textures/black_queen.jpg",3,'d',8));
+    piezas.push_back(new King("data/models/king.dae","data/textures/white_king.jpg",0,'e',1));
+    piezas.push_back(new King("data/models/king.dae","data/textures/black_king.jpg",1,'e',8));
+    piezas.push_back(new Queen("data/models/queen.dae","data/textures/white_queen.jpg",2,'d',1));
+    piezas.push_back(new Queen("data/models/queen.dae","data/textures/black_queen.jpg",3,'d',8));
 
     for(int i = 0; i <= 1; i++){
-        pieces.push_back(new Rook("data/models/rook.dae","data/textures/white_rook.jpg",4,column[i*7],1));           //white rooks
-        pieces.push_back(new Rook("data/models/rook.dae","data/textures/black_rook.jpg",5,column[i*7],8));           //black rooks
-        pieces.push_back(new Bishop("data/models/bishop.dae","data/textures/white_bishop.jpg",6,column[(i*3)+2],1)); //white bishops
-        pieces.push_back(new Bishop("data/models/bishop.dae","data/textures/black_bishop.jpg",7,column[(i*3)+2],8)); //black bishops
-        pieces.push_back(new Knight("data/models/knight.dae","data/textures/white_knight.jpg",8,column[(i*5)+1],1)); //white knights
-        pieces.push_back(new Knight("data/models/knight.dae","data/textures/black_knight.jpg",9,column[(i*5)+1],8)); //black knights
+        piezas.push_back(new Rook("data/models/rook.dae","data/textures/white_rook.jpg",4,columna[i*7],1));           //white rooks
+        piezas.push_back(new Rook("data/models/rook.dae","data/textures/black_rook.jpg",5,columna[i*7],8));           //black rooks
+        piezas.push_back(new Bishop("data/models/bishop.dae","data/textures/white_bishop.jpg",6,columna[(i*3)+2],1)); //white bishops
+        piezas.push_back(new Bishop("data/models/bishop.dae","data/textures/black_bishop.jpg",7,columna[(i*3)+2],8)); //black bishops
+        piezas.push_back(new Knight("data/models/knight.dae","data/textures/white_knight.jpg",8,columna[(i*5)+1],1)); //white knights
+        piezas.push_back(new Knight("data/models/knight.dae","data/textures/black_knight.jpg",9,columna[(i*5)+1],8)); //black knights
     }
     for(int i = 0; i <= 7; i++){
-        pieces.push_back(new Pawn("data/models/pawn.dae","data/textures/white_pawn.jpg",10,column[i],2));            //white pawns
-        pieces.push_back(new Pawn("data/models/pawn.dae","data/textures/black_pawn.jpg",11,column[i],7));            //black pawns
+        piezas.push_back(new Pawn("data/models/pawn.dae","data/textures/white_pawn.jpg",10,columna[i],2));            //white pawns
+        piezas.push_back(new Pawn("data/models/pawn.dae","data/textures/black_pawn.jpg",11,columna[i],7));            //black pawns
     }
     board = new Piece("data/models/board.dae","data/textures/board.jpg",12,'z',0);                                   //chess board
-    printf("loaded starting pieces\n");
+    printf("loaded starting piezas\n");
 }
 
 void drawBoard(){
@@ -50,13 +50,13 @@ void drawBoard(){
 }
 
 void drawPieces(){
-    for(int i = 0; i <= pieces.size()-1; i++){ //draw pieces on the board
+    for(int i = 0; i <= piezas.size()-1; i++){ //draw piezas on the board
         glLoadName(1+i);
-        pieces.at(i)->draw();
+        piezas.at(i)->draw();
     }
     int white_counter = 0, black_counter = 0;
-    for(int j = 0; j < side_pieces.size(); j++){ //draw dead pieces on the side
-        Piece* temp = side_pieces.at(j);
+    for(int j = 0; j < piezas_comidas.size(); j++){ //draw dead piezas on the side
+        Piece* temp = piezas_comidas.at(j);
         if(temp->color == BLACK){
             if(black_counter <= 7){	//front row
                 temp->draw(true, -11.3, 8-(2*black_counter));
@@ -112,8 +112,8 @@ void keyEvents(unsigned char key, int x, int y){
             glDeleteShader(v);
             glDeleteShader(f);
             glDeleteProgram(p);
-            for(int i = 0; i < pieces.size(); i++){
-                free(pieces.at(i));
+            for(int i = 0; i < piezas.size(); i++){
+                free(piezas.at(i));
             }
             printf("shaders freed\n");
             exit(0);
@@ -136,11 +136,11 @@ void initGL(void){
 
 //calls pick function on the piece at the position specified
 void pickPiece(int col, int row){
-    Piece* piece = piece_at(col,row);
+    Piece* piece = pieza_en(col,row);
     if(piece != NULL){
-        if((piece->color == BLACK && gamestate == BLACK_TURN) || (piece->color == WHITE && gamestate == WHITE_TURN)){
-            for(int j = 0; j <= pieces.size()-1; j++){
-                pieces.at(j)->unpick();
+        if((piece->color == BLACK && estadodeljuego == TURNO_NEGRAS) || (piece->color == WHITE && estadodeljuego == TURNO_BLANCAS)){
+            for(int j = 0; j <= piezas.size()-1; j++){
+                piezas.at(j)->unpick();
             }
             piece->pick();
             selected_piece = piece;
@@ -150,17 +150,17 @@ void pickPiece(int col, int row){
 
 //swaps turns from white to black or black to white
 void swap_turns(void){
-    if(gamestate == WHITE_TURN){
-        gamestate = BLACK_TURN;
-    }else if(gamestate == BLACK_TURN){
-        gamestate = WHITE_TURN;
+    if(estadodeljuego == TURNO_BLANCAS){
+        estadodeljuego = TURNO_NEGRAS;
+    }else if(estadodeljuego == TURNO_NEGRAS){
+        estadodeljuego = TURNO_BLANCAS;
     }
 }
 
-//processes which piece is clicked and which tile is clicked
+//processes which piece is clicked and which casilla is clicked
 void list_hits(GLint hits, GLuint *names){
-    for(int i = 0; i <= pieces.size()-1; i++){
-        pieces.at(i)->unpick();
+    for(int i = 0; i <= piezas.size()-1; i++){
+        piezas.at(i)->unpick();
     }
     bool move_pressed = false;
     for (int i = 0; i < hits; i++){
@@ -171,23 +171,23 @@ void list_hits(GLint hits, GLuint *names){
         }
         if(name >= 101){
             name -= 100;
-            grid_row = 9-(name%8);
-            if(grid_row == 9)
-                grid_row = 1;
-            grid_col = ceil((float)name/8.0f);
-            grid_column = column[grid_col-1];
-            printf("row = %i col = %i name = %i\n",grid_row,grid_col,name);
+            fila_tablero = 9-(name%8);
+            if(fila_tablero == 9)
+                fila_tablero = 1;
+            columna_tablero = ceil((float)name/8.0f);
+            columna_tablero_c = columna[columna_tablero-1];
+            printf("row = %i col = %i name = %i\n",fila_tablero,columna_tablero,name);
         }
     }
     if(move_pressed){
-        if((grid_pieces[grid_row-1][grid_col-1] == BLACK && gamestate == WHITE_TURN) || (grid_pieces[grid_row-1][grid_col-1] == WHITE && gamestate == BLACK_TURN)) //if the possible move is a capture move
-            remove_piece(grid_col,grid_row); //... then remove the piece that's eaten
-        selected_piece->move((unsigned int)grid_col,(unsigned int)grid_row);
+        if((piezas_tablero[fila_tablero-1][columna_tablero-1] == BLACK && estadodeljuego == TURNO_BLANCAS) || (piezas_tablero[fila_tablero-1][columna_tablero-1] == WHITE && estadodeljuego == TURNO_NEGRAS)) //if the possible move is a capture move
+            remover_pieza(columna_tablero,fila_tablero); //... then remove the piece that's eaten
+        selected_piece->move((unsigned int)columna_tablero,(unsigned int)fila_tablero);
         swap_turns();
         clearMovesList();
         selected_piece->unpick();
     }
-    pickPiece(grid_col,grid_row);
+    pickPiece(columna_tablero,fila_tablero);
 }
 
 //sets up gl select mode
@@ -246,7 +246,7 @@ int main(int argc, char **argv){
     initGL();
     initDLs();
     loadPieces();
-    gamestate = WHITE_TURN; //white starts first
+    estadodeljuego = TURNO_BLANCAS; //white starts first
 
     glClearColor(0.8, 0.8, 0.8, 1);
     glutDisplayFunc(draw);

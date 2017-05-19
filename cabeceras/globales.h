@@ -20,34 +20,34 @@ using namespace std;
 #define BLACK 1337
 #define WHITE 6969
 //Definicion del estado del juego
-enum GAMESTATE : int{
-    MENU,WHITE_TURN,BLACK_TURN,WHITE_WIN,BLACK_WIN,TIE
+enum estadodeljuego : int{
+    MENU,TURNO_BLANCAS,TURNO_NEGRAS,GANAN_LAS_BLANCAS,GANAN_LAS_NEGRAS,EMPATE
 };
 
 //Declaraciones de Variables
-GLuint texture[32];
-float angle = 0.0f;
-GLuint p,f,v,tile;
-int grid_row, grid_col;
-char grid_column;
-int highlighted_tiles[56][2] = {0};
-int grid_pieces[8][8] = {0};
-GAMESTATE gamestate;
-char column[9] = {'a','b','c','d','e','f','g','h','z'};
-vector<Pieza*> pieces,side_pieces;
+GLuint textura[32];
+float angulo = 0.0f;
+GLuint p,f,v,casilla;
+int fila_tablero, columna_tablero;
+char columna_tablero_c;
+int casillas_resaltadas[56][2] = {0};
+int piezas_tablero[8][8] = {0};
+estadodeljuego estadodeljuego;
+char columna[9] = {'a','b','c','d','e','f','g','h','z'};
+vector<Pieza*> piezas,piezas_comidas;
 
 //Declaracion de Funciones
 
 /*!
-   \brief "Funcion para retornar la posision de una pieza si estan en
+   \brief "Funcion para retornar que pieza esta en
           la posision enviada por parametros"
    \param "int Col, int row"
    \return "Pieza* "
 */
-Pieza* piece_at(int col, int row){
-    for(int i = 0; i <= pieces.size()-1; i++){
-        if(pieces.at(i)->c_Row == row && pieces.at(i)->c_Col == col){ //busqueda si existe una pieza en esta posision
-            return pieces.at(i); //retorno de un apuntador de la clase pieza
+Pieza* pieza_en(int col, int row){
+    for(int i = 0; i <= piezas.size()-1; i++){
+        if(piezas.at(i)->c_Row == row && piezas.at(i)->c_Col == col){ //busqueda si existe una pieza en esta posision
+            return piezas.at(i); //retorno de un apuntador de la clase pieza
         }
     }
 }
@@ -57,27 +57,27 @@ Pieza* piece_at(int col, int row){
    \param "int col, int row"
    \return "Void"
 */
-void remove_piece(int col, int row){
-    Pieza* temp = piece_at(col, row); //retorno de la pieza
-    auto it = find(pieces.begin(), pieces.end(), temp); // Busca de principio a fin del vector pieces el valor de temp
-    side_pieces.push_back(temp); //Piezas comidas
-    if(it != pieces.end()){
-        pieces.erase(it); //borrar elemento encontrado
-        grid_pieces[row-1][col-1] = 0; //borrar la pieza del tablero
+void remover_pieza(int col, int row){
+    Pieza* temp = pieza_en(col, row); //retorno de la pieza
+    auto esta_pieza = find(piezas.begin(), piezas.end(), temp); // Busca de principio a fin del vector piezas el valor de temp
+    piezas_comidas.push_back(temp); //Piezas comidas
+    if(esta_pieza != piezas.end()){
+        piezas.erase(esta_pieza); //borrar elemento encontrado
+        piezas_tablero[row-1][col-1] = 0; //borrar la pieza del tablero
     }
 }
 
 /*!
-   \brief "Generacion del los celdas"
+   \brief "Generacion del los casillas"
    \param "Void"
    \return "Void"
 */
 void initDLs(void){
     printf("%i\n",A);
-    tile = glGenLists(1); //Genera una lista de visualizacion
+    casilla = glGenLists(1); //Genera una lista de visualizacion
 
     //Rellena la lista y la compila
-    glNewList(tile,GL_COMPILE);
+    glNewList(casilla,GL_COMPILE);
       glBegin(GL_QUADS);
           glVertex3f(1,0,1);
           glVertex3f(-1,0,1);
@@ -105,23 +105,23 @@ void drawGrid(void){
             glPushMatrix();
             glColor4f(1,1,1,0);
             glTranslatef( -7+(i*2) , -0.97 , (-7+(j*2)) );
-            glCallList(tile); //Ejecuta la lista celda
+            glCallList(casilla); //Ejecuta la lista celda
             glPopMatrix();
         }
     }
 
     //Dibuja las celdas marcadas donde se puede mover la pieza
     //En la inicializacion no es posible llamarla pues esta inicializada con 0
-    for(int k = 0; k < sizeof(highlighted_tiles)/sizeof(highlighted_tiles[0]); k++){
-        if(highlighted_tiles[k] != 0){
-            int row = highlighted_tiles[k][0]-1;
-            int col = highlighted_tiles[k][1]-1;
+    for(int k = 0; k < sizeof(casillas_resaltadas)/sizeof(casillas_resaltadas[0]); k++){
+        if(casillas_resaltadas[k] != 0){
+            int row = casillas_resaltadas[k][0]-1;
+            int col = casillas_resaltadas[k][1]-1;
             if(col >= 0 && col >= 0 && col <= 7 && col <= 7){
                 glLoadName(165);
                 glPushMatrix();
                 glColor4f(1,0,0,0.5);
                 glTranslatef(-7+(col*2), -0.96 , -(-7+(row*2)) );
-                glCallList(tile);
+                glCallList(casilla);
                 glColor4f(1,0,0,1);
                   glBegin(GL_LINES);
                     glVertex3f(1,0,1);
@@ -150,11 +150,9 @@ void drawGrid(void){
 }
 
 /*!
-   \brief "Description"
-   \param "Param description"
-   \pre "Pre-conditions"
-   \post "Post-conditions"
-   \return "Return of the function"
+   \brief "Definir los shaders de las figuras, los cuales se encuentra el la carpeta data"
+   \param "Void"
+   \return "Void"
 */
 void setShaders(void){
     char *vs = NULL,*fs = NULL;
@@ -185,33 +183,59 @@ void setShaders(void){
     glUseProgram(p);
 }
 
+/*!
+   \brief "Te retorna si existe la casilla que mandas a llamar"
+   \param "int col, int row"
+   \return "bool"
+*/
 bool checkSquare(int col, int row){
-    if(grid_pieces[row-1][col-1] >= 1){
+    if(piezas_tablero[row-1][col-1] >= 1){
         return true;
     }
     return false;
 }
 
+/*!
+   \brief "Limpiar la lista de movimientos se encarga de reiniciar el array casillas_marcadas"
+   \param "void"
+   \return "void"
+*/
 void limpiarListaMovimientos(void){
-    memset(highlighted_tiles,0,sizeof(highlighted_tiles[0][0])*(sizeof(highlighted_tiles)/sizeof(highlighted_tiles[0]))*2); //clear the array
+    memset(casillas_resaltadas,0,sizeof(casillas_resaltadas[0][0])*(sizeof(casillas_resaltadas)/sizeof(casillas_resaltadas[0]))*2); //clear the array
 }
 
+
+/*!
+   \brief "Funcion para retornar la distancia entre el inicio y la pieza"
+   \param "int col, int row"
+   \return "int"
+*/
 int get_index(int col, int row){
-    auto it = find(pieces.begin(), pieces.end(), piece_at(col,row));
-    if (it == pieces.end()){
+    auto esta_pieza = find(piezas.begin(), piezas.end(), pieza_en(col,row)); //verifica que exista un position una pieza
+    if (esta_pieza == piezas.end()){
         return -1;
     }else{
-        return std::distance(pieces.begin(), it);
+        return std::distance(piezas.begin(), esta_pieza);
     }
 }
 
-void highlight_tile(int col, int row,unsigned int tile, bool captured_mode = false){
-    if((col <= 8 && row <= 8 && col > 0 && row > 0) && ((gamestate == WHITE_TURN && grid_pieces[row-1][col-1] != WHITE) ||(gamestate == BLACK_TURN && grid_pieces[row-1][col-1] != BLACK))){
-        highlighted_tiles[tile][0] = row;
-        highlighted_tiles[tile][1] = col;
+/*!
+   \brief "Funcion para remarcar las casillas con los posbles moviemientos y si el resultado de la operacion es correcta se almacena en las casillas_marcadas "
+   \param "int col, int row, unsigned int casilla, bool captured_mode = false"
+   \return "void"
+*/
+void highlight_tile(int col, int row, unsigned int casilla, bool captured_mode = false){
+    if((col <= 8 && row <= 8 && col > 0 && row > 0) && ((estadodeljuego == TURNO_BLANCAS && piezas_tablero[row-1][col-1] != WHITE) || (estadodeljuego == TURNO_NEGRAS && piezas_tablero[row-1][col-1] != BLACK))){
+        casillas_resaltadas[casilla][0] = row;
+        casillas_resaltadas[casilla][1] = col;
     }
 }
 
-void highlight_tile_k(int col, int row,unsigned int tile, bool captured_mode = false){
-    highlight_tile(col, row, tile, captured_mode);
+/*!
+   \brief "Funcion de comunicacion con la funcion anterior"
+   \param "int col, int row, unsigned int casilla, bool captured_mode = false"
+   \return "void"
+*/
+void highlight_tile_k(int col, int row, unsigned int casilla, bool captured_mode = false){
+    highlight_tile(col, row, casilla, captured_mode);
 }
